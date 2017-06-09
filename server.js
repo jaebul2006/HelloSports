@@ -2,7 +2,15 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var session = require('express-session');
-var fs = require('fs');
+var mongoose = require('mongoose');
+
+var db = mongoose.connection;
+db.on('error', console.error);
+db.once('open', function(){
+    console.log("connect to mongod server");
+});
+
+mongoose.connect('mongodb://localhost/test');
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
@@ -21,4 +29,5 @@ app.use(session({
     saveUninitialized:true
 }));
 
-var router = require('./router/main')(app, fs);
+var Book = require('./models/book');
+var router = require('./router/main')(app, Book);
